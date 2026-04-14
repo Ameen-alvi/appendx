@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Users, 
   BookOpen, 
   Clock, 
-  CheckCircle, 
   MessageSquare, 
   Wallet, 
   Menu, 
@@ -15,7 +14,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-// --- UI Components ---
+// --- Global UI Components ---
 
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white rounded-2xl shadow-sm border border-slate-100 p-5 ${className}`}>
@@ -49,7 +48,6 @@ const MOCK_JOBS = [
 export default function App() {
   const [view, setView] = useState('landing'); // landing, requester, tutor
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
 
   // Navigation handlers
   const navigateTo = (newView) => {
@@ -60,7 +58,6 @@ export default function App() {
 
   const LandingPage = () => (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
       <section className="px-6 pt-24 pb-12 bg-gradient-to-b from-indigo-50 to-white text-center">
         <div className="inline-block px-4 py-1.5 mb-6 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold tracking-wide uppercase">
           NED University Startup
@@ -77,7 +74,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* Features */}
       <section className="px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         <Card className="text-center">
           <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -189,7 +185,9 @@ export default function App() {
         Open Opportunities Near You
       </h3>
       
-      <div className="space-y-4">          <Card key={job.id} className="hover:border-indigo-300 transition-colors cursor-pointer group">
+      <div className="space-y-4">
+        {MOCK_JOBS.map(job => (
+          <Card key={job.id} className="hover:border-indigo-300 transition-colors cursor-pointer group">
             <div className="flex justify-between mb-3">
               <h4 className="font-bold text-lg group-hover:text-indigo-600 transition-colors">{job.course}</h4>
               <span className="font-bold text-green-600 text-lg">PKR {job.reward}</span>
@@ -215,53 +213,44 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div 
-            className="flex items-center gap-2 cursor-pointer" 
-            onClick={() => setView('landing')}
-          >
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo('landing')}>
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <X className="text-white rotate-45" size={20} />
             </div>
             <span className="text-xl font-black tracking-tight text-slate-900">AttendX</span>
           </div>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => setView('landing')} className="text-sm font-semibold hover:text-indigo-600">How it works</button>
-            <button onClick={() => setView('requester')} className="text-sm font-semibold hover:text-indigo-600">Student Portal</button>
-            <button onClick={() => setView('tutor')} className="text-sm font-semibold hover:text-indigo-600">Become a Tutor</button>
+            <button onClick={() => navigateTo('landing')} className="text-sm font-semibold hover:text-indigo-600">Home</button>
+            <button onClick={() => navigateTo('requester')} className="text-sm font-semibold hover:text-indigo-600">Request</button>
+            <button onClick={() => navigateTo('tutor')} className="text-sm font-semibold hover:text-indigo-600">Earn</button>
             <Button variant="primary" className="text-sm">Sign In</Button>
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
 
-        {/* Mobile Sidebar */}
         {isMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-slate-100 p-6 flex flex-col gap-4 shadow-xl">
             <button onClick={() => navigateTo('landing')} className="text-left font-bold py-2">Home</button>
             <button onClick={() => navigateTo('requester')} className="text-left font-bold py-2">Student Dashboard</button>
             <button onClick={() => navigateTo('tutor')} className="text-left font-bold py-2">Tutor Marketplace</button>
             <hr />
-            <Button variant="primary">Log In / Register</Button>
+            <Button variant="primary">Log In</Button>
           </div>
         )}
       </nav>
 
-      {/* Main Content Area */}
-      <main>
+      <main className="pb-24">
         {view === 'landing' && <LandingPage />}
         {view === 'requester' && <RequesterDashboard />}
         {view === 'tutor' && <TutorDashboard />}
       </main>
 
-      {/* Shared Footer for Dashboards */}
       {view !== 'landing' && (
         <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 md:hidden px-6 py-3">
           <div className="flex justify-between items-center max-w-lg mx-auto">
